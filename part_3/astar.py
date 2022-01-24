@@ -42,6 +42,40 @@ def astar(start_state, goaltest, h):
     # And gotten as (prio,state) = Q.get()
     Q = PriorityQueue()
 
+    # start node initialization
+    start_node = (h(start_state), start_state)
+    Q.put(start_node)
+    g[start_state] = 0
+    
+    while not Q.empty():
+        (prio, state) = Q.get()
+
+        if goaltest(state):
+            optimal = []
+
+            while state is not start_state:
+                optimal.insert(0, predecessor[state][1])
+                state = predecessor[state][0]
+
+            return optimal
+            
+        for (action, n_state) in state.successors():
+            if n_state not in g:
+                g[n_state] = g[state] + action.cost
+                predecessor[n_state] = (state, action)
+                node = (h(n_state) + g[n_state], n_state) 
+                Q.put(node)
+
+            else:
+                if g[state] + action.cost < g[n_state]:
+                    g[n_state] = g[state] + action.cost
+                    predecessor[n_state] = (state, action)
+                    node = (h(n_state) + g[n_state], n_state) 
+                    Q.put(node)
+                    
+    return None
+
+
     # TASK
     # ---------------------------------
     # Complete the A* star implementation.
