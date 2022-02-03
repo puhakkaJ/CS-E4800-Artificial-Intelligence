@@ -1,7 +1,11 @@
 from queue import PriorityQueue
 from math import inf
 
+
+
+
 def astar(start_state, goaltest, h):
+
     """
     Perform A-star search.
 
@@ -72,7 +76,7 @@ def astar(start_state, goaltest, h):
                     predecessor[n_state] = (state, action)
                     node = (h(n_state) + g[n_state], n_state) 
                     Q.put(node)
-                    
+
     return None
 
 
