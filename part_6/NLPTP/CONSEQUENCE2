@@ -1,0 +1,12 @@
+
+
+Jill is John's grandparent.
+Jill is Mary's grandparent.
+John is not Mary's sibling.
+John is a male.
+Mary is a female.
+==================================
+John is Mary's cousin.
+
+# Critical thing is that John != Mary, and this follows from
+# them being male and female, and these two being disjoint.
