@@ -204,7 +204,7 @@ def exactly_one_execution(tasks, time_interval):
     trues = []
 
     for task in tasks:
-        for time in range(time_interval[0], time_interval[1] ):
+        for time in range(time_interval[0], time_interval[1] + 1):
             formulas.append(variable(task, time))
         trues.append(exactly_one(formulas))
         formulas = []
@@ -243,7 +243,7 @@ def mutually_exclusive_tasks(tasks, resource_need, time_interval):
 
     formulas = []
 
-    for t in range(time_interval[0], time_interval[1] ):
+    for t in range(time_interval[0], time_interval[1] + 1):
         for p in all_pairs(tasks):
             if resource_need[p[0]] == resource_need[p[1]]:
                 h = (NOT(variable(p[0], t)), NOT(variable(p[1], t)))
@@ -278,7 +278,7 @@ def task_ordering(orders, time_interval):
     formulas = []
 
     for o in orders:
-        for t in range(time_interval[0], time_interval[1] ):
+        for t in range(time_interval[0], time_interval[1] + 1):
             for z in range(1, t + 1):
                 h = (NOT(variable(o[0], t)), NOT(variable(o[1], z)))
                 formulas.append(OR(h))
