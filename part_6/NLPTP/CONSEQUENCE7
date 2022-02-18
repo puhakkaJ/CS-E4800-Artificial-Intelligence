@@ -1,0 +1,19 @@
+
+
+Jill is John's aunt.
+Jill is Mary's mother.
+Anne is John's sister.
+Jack is Mary's brother.
+==================================
+Anne is Jack's cousin.
+
+# Here it is critical that we have the assumption that siblings
+# share both parents. (We could have a separate concept of
+# half-sibling for the case when only one parent is shared.)
+# Without that assumption this inference is not valid, because
+# Jack and Anne would not have to share parents who are siblings.
+#
+#                     Jill --- sibling --- ?
+#                       |                  |
+# Jack --- sibling --- Mary                John --- sibling --- Anne
+#

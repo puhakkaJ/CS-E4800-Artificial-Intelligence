@@ -1,0 +1,149 @@
+
+You need to have the Ply lexer/parser generator installed for
+your Python. translate.py will not run without it.
+
+FILES:
+
+   predlogic.py
+
+     Representations for formulas in the predicate logic
+
+  translate.py
+
+     This contains the parser and the translation from English
+     to the predicate logic.
+
+     It reads a file with English sentences, and does the translation,
+     and outputs the formulas to the display as well as to a file
+     in the TPTP format.
+     If the file contains a line ==============, then what is output
+     to the TPTP formatted file is for a logical consequence test
+     of the formula after that line from the formulas before
+     the line.
+
+     For this logical consequence test translate.py includes
+     a collection of formulas about family relations,
+     defining concepts such as mother, father, grandparent,
+     and expressing relations between these concepts.
+     These are necessary for many of the inferences in the
+     sample files given.
+
+     translate.py implements a couple of grammar rules that were
+     not given in the lecture material, e.g. adjectives and
+     the genitives "mother of John" and "John's mother".
+     Read and understand these rules. Their implementation,
+     including the semantics, is similar to the other rules.
+
+   TEXT1, TEXT2
+
+     English sentences to test the translation
+     TEXT1 works out of the box.
+     TEXT2 requires the completion of TASK 1, adding grammar rules
+     for syntactic constructs not present in TEXT1.
+
+     You can try these by writing something like
+
+        python3.8 translate.py TEXT1
+
+     The output will show the translations of all the English
+     sentences in TEXT1 in the predicate logic. Notice that
+     the implication connective -> has been reduced to NOT and OR,
+     by the equivalence (A -> B) = (NOT A) V B, so some formulas
+     might not look exactly what you would expect.
+
+   CONSEQUENCE1, CONSEQUENCE2, ...
+
+     Inferences to be performed from given premises to a conclusion,
+     expressed in sentences in English.
+
+     You can try these by first writing something like
+
+        python3.8 translate.py CONSEQUENCE1 CONS1.TPTP
+
+     and then feeding the output in CONS1.TPTP to GKC:
+
+        ./gkc CONS1.TPTP
+
+     See instructions below to understand the TPTP syntax
+     and the output from GKC.
+
+
+PROGRAMMING TASK:
+
+   Your task is to extend the grammar with the rules
+
+       sentence : sentence OR sentence
+
+       VP : VP AND VP
+
+       CN : adjID CN
+
+   and to devise and implement the corresponding semantics.
+   Sentences in the file TEXT2 do not parse without
+   this extension. Sentences that require these rules
+   include
+     "John sees Mary or Mary sleeps."
+     "A man sees a woman and hears a man."
+     "A sad man sees Mary."
+   Make sure that the meaning of these phrases you assign
+   to t[0] is of the appropriate type, and that their
+   predicate logic representation is right.
+
+   After your extension correctly parses TEXT2, and the
+   formulas they generate are correct, you may submit your
+   translate.py.
+
+THE TPTP SYNTAX FOR FIRST-ORDER FORMULAS IN THE PREDICATE LOGIC:
+
+   A file in the TPTP format consists formulas such as
+
+     fof(formula25,axiom, (? [X] : (mother(X,john) & sleeps(X)))).
+     fof(formula26,axiom, (? [X] : (mother(X,john) & sees(X,john)))).
+     fof(formula29,axiom, (~ (john = jack))).
+
+   In the first of these three,
+      "formula25" is the name of the formula,
+      "axiom" means that the formula is taken as is, and
+      ? [X] : (mother(X,john) & sleeps(X)) is the formula itself.
+
+   The syntax for connectives and quantifiers in TPTP is as follows:
+      "? [X] :" denotes existential quantification of the variable X
+      "! [X] :" denotes universal quantification of the variable X
+      &         denotes conjunction
+      |         denotes disjunction
+      ~         denotes negation
+      Identifiers in lower case are constant, function and predicate
+      symbols.
+      Identifiers in upper case are variables.
+
+   Instead of "axiom", a formula can be a "conjecture", which means
+   that will be negated, and the satisfiability test the theorem prover
+   performs is a logical consequence test of axioms |= conjecture.
+   If a proof is found, then the logical consequence holds.
+   If the set is satisfiable, then the logical consequence does not hold.
+   If the result is inconclusive, then we don't know.
+
+DOWNLOAD GKC: https://github.com/tammet/gkc/releases
+RUNNING GKC:
+
+GKC takes the name of a TPTP formatted file in the command line.
+translate.py produces such files (by default called OUTPUT.TPTP).
+
+  If the formula is satisfiable (or logical consequence does not hold)
+  GKC either runs for a long time (or forever) or says "proof not found".
+
+  Otherwise the program says "proof found" and outputs a resolution refutation
+  (which is usually long and not really readable unless you are an expert in
+  predicate logic theorem proving.)
+
+  With the given examples, GKC determines logical consequence (unsatisfiability)
+  very quickly, usually in a second. If you experiment with other sets of
+  formulas that are satisfiable, the runs may take long, several minutes
+  or more. This is a symptom of the semi-decidability of the predicate
+  logic: there is no general effective termination condition for
+  predicate logic theorem-proving. Under some rather strict restrictions
+  on the types and nesting of quantification and the use of function
+  symbols, the predicate logic is decidable (termination of the inference
+  algorithms is guaranteed), but it is still not nearly as well
+  scalable as the propositional logic in applications in which both
+  could be used.
