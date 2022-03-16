@@ -477,12 +477,12 @@ A14 = FORALL("x",FORALL("y",FORALL("z",IMPL(sibling(x,y),
 
 # Only one mother and one father
 
-A15 = FORALL("x",FORALL("y",FORALL("z",IMPL(AND(mother(x,y),mother(z,y)),
-                                            EQUAL(x,z)))))
+"""A15 = FORALL("x",FORALL("y",FORALL("z",IMPL(AND(mother(x,y),mother(z,y)),
+                                            EQUAL(x,z)))))"""
 A16 = FORALL("x",FORALL("y",FORALL("z",IMPL(AND(father(x,y),father(z,y)),
                                             EQUAL(x,z)))))
 
-familyrelations = [A1,A11,A2,A3,A4,A5,A6,A7,A8,A9,A10,A15,A12,A14,A13,A16]
+familyrelations = [A2,A3,A4,A5,A6,A7,A8,A9,A10,A1,A11,A12,A13,A14,A16]
 
 # Show formulas and generate TPTP output
 
