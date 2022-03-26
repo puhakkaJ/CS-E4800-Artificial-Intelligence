@@ -1,0 +1,123 @@
+
+INSTRUCTIONS
+
+This programming exercise is a mapping from a simple general-purpose
+representation of state-space reachability problems (single-agent
+decision-making for deterministic problems) to the propositional
+logic. This is one of the main applications of satisfiability
+checking methods, widely applied in solving different problems
+in A.I. and in formal methods, especially validation of software
+and hardware systems.
+
+1. Copy template-SATreachability.py to SATreachability.py.
+2. Complete the missing parts of the translation from
+   the problem representation to logic.
+3. See that instances of the sample problem in examples-planning.py
+   are solved correctly.
+4. Submit.
+
+PROBLEM REPRESENTATION
+
+The problems are represented as triples init,goal,actions where
+  init     List of state variables that are initially true
+  goal     List of state variables that must be made true
+  actions  How the state can be changed. Represented as
+           quadruples (name,condition,posEffects,negEffects)
+           where
+	        'name'       is a string, unique to the action
+		'condition'  is list of state variables that must be
+		             True when action is taken.
+                'posEffects' is state variables that become True
+		             when the action is taken.
+                'negEffects' is state variables that become False
+		             when the action is taken.
+
+This language is sufficient to encode almost anything.
+For example, the Turing machine simulations used in Cook's
+theorem (NP-hardness of SAT) are easily mapped to this
+representation.
+
+TRANSLATION INTO THE PROPOSITIONAL LOGIC
+
+To translate such a problem to the propositional logic the
+following formulas are generated. The time points are from 0
+to T, representing state sequences of length T+1, with
+T consecutive actions. The states are represented by the atomic
+formulas x@0,...x@T for every state variable x.
+
+For the initial state, we take the 'init' variables, and attach
+the time tag @0 to all of them, and then the negations of all
+state variables that do not occur in 'init' similarly with time
+tag @0. This determines one initial state uniquely.
+
+For the terminal state, we take all variables in 'goal' and
+attach the time tag @T to them. There may be several goal
+states is not all state variables are required to be true.
+
+For each action with name 'a' and time point t, we have atomic
+propositions 'a@t' to denote if action 'a' is taken at t.
+
+For representing the formulas we have for all t in 0..T-1
+the following formulas.
+
+  a@t -> x@t if x belongs to 'condition' for action 'a'
+  a@t -> x@(t+1) if x belongs to 'posEffects' for action 'a'
+  a@t -> not x@(t+1) if x belongs to 'negEffects' for action 'a'
+
+Finally, we require that for every change for a state
+variable there must be an action that makes that change.
+In other words, there cannot be change without a cause.
+For each state variable x and time point t we have the formula
+
+  (x@t & not x@(t+1)) -> a1@t V a2@t V ... V an@t
+
+for all t in 0..T-1, where a1,a2,...,an are all actions
+with x in negEffects. Similarly we have
+
+  (not x@t & x@(t+1)) -> a1@t V a2@t V ... V an@t
+
+where a1,a2,...,an are all actions with x in posEffects.
+The formulas are called 'frame axioms' for historical
+reasons. You can rewrite them in different ways,
+to get the intuition behind them. The first one can
+be written in any of the following equivalent forms.
+
+  not a1@t & not a2@t & ... & not an@t & not x@t -> not x@(t+1)
+  not a1@t & not a2@t & ... & not an@t & x@(t+1) -> x@t
+  not x@(t+1) -> a1@t V a2@t V ... V an@t V not x@t
+  x@t -> a1@t V a2@t V ... V an@t V x@(t+1)
+
+So far none of the formulas directly forbid taking
+any two or more actions at the same time point.
+We allow to action a1 and a2 at the same time point
+if we can execute them in either order a1,a2 or a2,a1.
+If this is not possible, we prohibit their simultaneous
+execution by the formula
+
+  not(a1@t & a2@t)
+
+for all t in 0..T-1. Two actions a1 and a2 can be executed
+in both ordering a1,a2 and a2,a1 if
+- the conditions of both are true (no need to test this!),
+- condition of a1 does not intersect negEffects of a2
+- condition of a2 does not intersect negEffects of a1.
+If we have non-empty intersection in one of those two
+cases, then we need that formula not(a1@t & a2@t).
+If these formulas are omitted, then we will be getting
+plans that are impossible to execute, like going from
+location A simultaneously to both locations B and C.
+WARNING: Make sure yo do not use this formula if a1=a2.
+
+USE OF THESE FORMULAS
+
+These formulas are for determining if a goal state
+can be reached from the initial state by a state
+sequence of some fixed length N. Notice that the
+change between two consecutive states can be caused
+by multiple actions.
+The required N is generally not known in advance, and
+this means that a SAT solver is to be called with
+different values of N=0,1,2,3,... until a satisfiable
+formula is found. The "plan", the actions that are
+needed to reach the goals, can be read from the satisfying
+valuation returned by the SAT solver.
