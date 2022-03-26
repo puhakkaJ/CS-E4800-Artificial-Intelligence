@@ -186,6 +186,7 @@ class Agent(AgentInterface):
         # ----------------------------------------------------------------------
 
         # Replace the following lines with your algorithm
+        # The alpha-beta algorithm
         alpha = - float('inf')
         beta = float('inf')
         depth = 4
