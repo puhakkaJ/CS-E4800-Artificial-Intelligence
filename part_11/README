@@ -1,0 +1,23 @@
+
+Files:
+  plans.py             Branching plans with partial observability
+  template-POplanFwd   Code template for the AND-OR tree search algorithm
+  numbers.py           Test problem: Identify number (observations: odd/even, prime)
+  findheaviest.py      Test problem: Find heaviest object
+  mastermind.py        Test problem: The Mastermind game
+
+Instructions:
+  Read and understand all code
+  Copy template-POplan.py to POplan.py
+  Complete the algorithm in POplan.py
+  Test it with numbers,py, findheaviest.py and mastermind.py
+  Submit it, after confirming that it works correctly
+
+The algorithm is the basic (uninformed) forward search algorithm
+discussed in the lecture material. This is essentially a depth-first
+search algorithm, and has similar properties as the DFS algorithm
+for single-agent decision-making: it has no optimality guarantees,
+and there needs to be a cycle check to avoid infinite computations.
+An algorithm that would produce optimal plans, and that would also
+do far less search in many cases, is the AO* algorithm for finding
+optimal solutions to AND-OR tree search problems.
